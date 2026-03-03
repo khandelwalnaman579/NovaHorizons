@@ -1,0 +1,1 @@
+## Nova Horizons is a futuristic space tourism platform that allows users to explore and plan travel beyond Earth. From lunar stays to Mars expeditions and orbital space hotels, it reimagines holidays across the universe. Built to combine innovation, technology, and the vision of interplanetary travel. 🚀 
