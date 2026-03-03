@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Horizons - Space Travel Experiences</title>
+</head>
+<body>
+    <h1>Welcome to Nova Horizons</h1>
+    <p>Explore the universe with our exclusive space travel experiences.</p>
+    <form action="/listings/new" method="get">
+        <button type="submit">Create New Listing</button>
+    </form>
+    <ul>
+        <% allListings.forEach(listing => { %>
+            <li><a href="/listings/<%= listing._id %>"><%= listing.title %> - <%= listing.destination %></a></li>
+        <% }); %>
+    </ul>
+</body>
+</html>

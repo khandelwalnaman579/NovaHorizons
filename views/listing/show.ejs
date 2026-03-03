@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Horizons - <%= listing.title %></title>
+</head>
+<body>
+    <h1><%= listing.title %></h1>
+    <p><%= listing.description %></p>
+    <p>Destination: <%= listing.destination %></p>
+    <p>Price: &#x20B9;<%= listing.price.toLocaleString("en-IN") %></p>
+    <p>Duration: <%= listing.durationInDays %> days</p>
+    <p>Capacity: <%= listing.capacity %> passengers</p>
+    <p>Amenities: <%= listing.amenities.join(", ") %></p>
+    <% if (listing.imageUrl) { %>
+        <img src="<%= listing.imageUrl %>" alt="<%= listing.title %>" style="max-width: 400px;">
+    <% } %>
+    <br><br>
+    <a href="/listings/<%= listing._id %>/edit">Edit Listing</a>
+    <br><br>
+    <form action="/listings/<%= listing._id %>?_method=DELETE" method="post">
+        <button type="submit">Delete Listing</button>
+    </form>
+    <br><br>
+    <a href="/listings">Back to All Listings</a>
+</body>
+</html>
