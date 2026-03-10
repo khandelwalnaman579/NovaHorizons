@@ -1,28 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nova Horizons - <%= listing.title %></title>
-</head>
-<body>
-    <h1><%= listing.title %></h1>
-    <p><%= listing.description %></p>
-    <p>Destination: <%= listing.destination %></p>
-    <p>Price: &#x20B9;<%= listing.price.toLocaleString("en-IN") %></p>
-    <p>Duration: <%= listing.durationInDays %> days</p>
-    <p>Capacity: <%= listing.capacity %> passengers</p>
-    <p>Amenities: <%= listing.amenities.join(", ") %></p>
-    <% if (listing.imageUrl) { %>
-        <img src="<%= listing.imageUrl %>" alt="<%= listing.title %>" style="max-width: 400px;">
-    <% } %>
-    <br><br>
-    <a href="/listings/<%= listing._id %>/edit">Edit Listing</a>
-    <br><br>
-    <form action="/listings/<%= listing._id %>?_method=DELETE" method="post">
-        <button type="submit">Delete Listing</button>
-    </form>
-    <br><br>
-    <a href="/listings">Back to All Listings</a>
-</body>
-</html>
+<% layout('/layouts/boilerplate') %>
+    <div class="row">
+        <div class="card col-8 offset-2 listing-detail-card">
+        <h3 class="show-title"><%= listing.title %></h3>
+        <img class="card-img-top show-img" src="<%= listing.imageUrl %>" alt="listing image">
+        <div class="card-body">
+            
+            <p class="card-text"><%= listing.description %></p> 
+            <p><%= listing.title %> - <%= listing.destination %></p>
+            <p>Price: &#x20B9;<%= listing.price.toLocaleString("en-IN") %>/<%= listing.durationInDays %> days</p>
+            <p>Type: <%= listing.type %></p>
+            <p>Amenities: <%= listing.amenities.join(', ') %></p>
+            <p>Available From: <%= listing.availableFrom ? listing.availableFrom.toDateString() : 'N/A' %> To: <%= listing.availableTo ? listing.availableTo.toDateString() : 'N/A' %></p>
+            <a href="/listings/<%= listing._id %>/edit" class="btn edit-btn edit-btn">Edit Listing</a>
+            <form action="/listings/<%= listing._id %>?_method=DELETE" method="post" style="display: inline-block;">
+                <button type="submit" class="btn delete-btn">Delete Listing</button>
+            </form>
+        </div>
+    </div>
+
+    </div>

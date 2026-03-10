@@ -1,20 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nova Horizons - Space Travel Experiences</title>
-</head>
-<body>
+<% layout('/layouts/boilerplate') %>
     <h1>Welcome to Nova Horizons</h1>
     <p>Explore the universe with our exclusive space travel experiences.</p>
-    <form action="/listings/new" method="get">
+    <!-- <form action="/listings/new" method="get">
         <button type="submit">Create New Listing</button>
-    </form>
-    <ul>
-        <% allListings.forEach(listing => { %>
-            <li><a href="/listings/<%= listing._id %>"><%= listing.title %> - <%= listing.destination %></a></li>
-        <% }); %>
-    </ul>
-</body>
-</html>
+    </form> -->
+        <div class="row  row-col-lg-3 row-col-md-2 row-col-sm-1" >
+            <% for(let listing of allListings) { %>
+            <div class="col">
+            <div class="card listing-card" style="width: 25rem;">
+                <a href="/listings/<%= listing._id %>" class="listing-link">
+               <img class="card-img-top" src="<%= listing.imageUrl %>" alt="listings image" height="25rem">
+               <div class="card-img-overlay"></div>
+                <div class="card-body">
+                  <h5 class="card-title"><%= listing.title %></h5>
+                  <p class="card-text"><%= listing.description %></p>
+                  <p><%= listing.title %> - <%= listing.destination %></p>
+                  <p>Price: &#x20B9;<%= listing.price.toLocaleString("en-IN") %>/<%= listing.durationInDays %> days</p>
+                </div></a>
+           </div>
+           </div>
+             <% } %>
+             <% if(allListings.length === 0) { %>
+                <p>No listings available at the moment. Please check back later!</p>
+            
+        <% } %>
+
+        </div>
+       
+    
