@@ -5,6 +5,8 @@ const { Schema, model } = mongoose;
 //const Schema = mongoose.Schema;
 //const model = mongoose.model;
 
+import Review from "./review.js";
+
 const listingSchema = new Schema(
   {
     title: {
@@ -64,15 +66,30 @@ const listingSchema = new Schema(
           return "https://images.unsplash.com/photo-1654280983312-110b5b422397?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
       }
     },
-
-    availableFrom: Date,
-    availableTo: Date,
   },
+  reviews:[
+       {
+        type: Schema.Types.ObjectId,
+        ref: "Review",
+       }
+  ],
+  availableFrom: Date,
+  availableTo: Date,
 
 },
 {
   timestamps: true,
 }
 );
+//delete middleware to remove associated reviews when a listing is deleted
+listingSchema.post('findOneAndDelete', async (listing)=>{
+     if(listing){
+        await Review.deleteMany({
+            _id: {
+                $in: listing.reviews,
+            },
+        });
+     }
+});
 
 export default model("Listing", listingSchema);

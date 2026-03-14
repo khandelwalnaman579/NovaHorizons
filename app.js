@@ -8,7 +8,8 @@ import Listing from './models/listing.js';
 import methodOverride from 'method-override';
 import wrapAsync from './utils/wrapAsync.js';
 import ExpressError from './utils/ExpressError.js';
-import listingSchema from './schema.js';
+import {listingSchema, reviewSchema} from './schema.js';
+import Review from './models/review.js';  
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
@@ -55,6 +56,20 @@ const validateListing = (req, res, next) =>{
         next();
     }
 }
+
+const validateReview = (req, res, next) =>{
+    let {error} = listingSchema.validate(req.body, { abortEarly: false });
+    if(error){
+        // let errMsg = error.details.map((el) => el.message).join(", ");
+        let errMsg = error.details
+             .map(el => el.message.replace(/"review\./g, "").replace(/"/g, ""))
+            .join(", ");
+        throw new ExpressError(400, errMsg);
+    }else{
+        next();
+    }
+}
+
 //Index route to display all listings
 app.get('/listings', wrapAsync(async (req, res, next) => {
         const allListings = await Listing.find({});
@@ -128,7 +143,7 @@ app.get('/listings/:id', wrapAsync(async (req, res, next) => {
      if (!mongoose.Types.ObjectId.isValid(id)) {
         return next(new ExpressError(400, "Invalid listing ID"));
     }
-    const listing = await Listing.findById(id);
+    const listing = await Listing.findById(id).populate("reviews");
     if (!listing) {
         return res.status(404).send('Listing not found');
     }
@@ -141,6 +156,37 @@ app.delete('/listings/:id', wrapAsync(async (req, res, next) => {
     const { id } = req.params;
     await Listing.findByIdAndDelete(id);
     res.redirect('/listings');
+})
+);
+//==========REVIEW==============
+
+// creating a new review for a listing
+app.post('/listings/:id/reviews', wrapAsync(async (req, res, next) => {
+    const { id } = req.params;
+    const listing = await Listing.findById(id);
+    if (!listing) {
+        return res.status(404).send('Listing not found');
+    }
+    let newReview = new Review({
+        comment: req.body.review.comment,
+        rating: req.body.review.rating 
+    });
+    listing.reviews.push(newReview);
+    await newReview.save();
+    await listing.save();
+    // Process the review submission here
+    res.redirect(`/listings/${id}`); // Redirect back to the listing page after submitting the review
+}));
+
+
+//Deleting a review from a listing
+app.delete("/listings/:id/reviews/:reviewId", wrapAsync(async (req, res) =>{
+    let{id, reviewId} = req.params;
+
+    await Listing.findByIdAndUpdate(id, {$pull: {reviews: reviewId}})
+    await Review.findByIdAndDelete(reviewId);
+
+    res.redirect(`/listings/${id}`);
 })
 );
 
