@@ -6,11 +6,12 @@ export const listingSchema = joi.object({
         imageUrl: joi.string().allow("",null),
         price: joi.number().required().min(0),
         destination: joi.string().required(),
+        type: joi.string().required(),
         capacity: joi.number().required().min(1),
         durationInDays: joi.number().required().min(0),
         amenities: joi.string().allow("", null),
-        availableFrom : joi.date().allow(null),
-        availableTo: joi.date().greater(joi.ref('availableFrom')).allow(null),
+       availableFrom: joi.date().optional().allow(null),
+       availableTo: joi.date().min(joi.ref('availableFrom')).optional().allow(null),
 }).required()
 });
 
