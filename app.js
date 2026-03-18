@@ -2,17 +2,19 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from "url";
 import mongoose from 'mongoose';
-import ejs from 'ejs';
 import ejsMate from 'ejs-mate';
 import methodOverride from 'method-override';
 import ExpressError from './utils/ExpressError.js';
 import listings from './routes/listing.js';
 import reviews from './routes/review.js';
+import session from 'express-session';
+import flash from 'connect-flash';
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 let port = 3000;
 let MONGO_URI = 'mongodb://localhost:27017/nova_horizons';
+
 // Connect to MongoDB
 main().then(() => { 
     console.log('Connected to MongoDB');
@@ -29,9 +31,29 @@ app.set('views', path.join(__dirname, 'views'));
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, 'public')));
+const sessionOptions = {
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        httpOnly: true,// to safe from cross-site scripting attacks
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7, // 1 week(in milliseconds)
+        maxAge: 1000 * 60 * 60 * 24 * 7
+    },
+};
+
 app.get('/', (req, res) => {
     res.send('Welcome to Nova Horizons!');
 });
+
+app.use(session(sessionOptions));
+app.use(flash());
+app.use((req, res, next) => {
+    res.locals.success = req.flash('success');  
+    res.locals.error = req.flash('error');
+    next();
+});
+
 app.use('/listings', listings);
 app.use("/listings/:id/reviews", reviews);
 app.use((req, res, next) => {
