@@ -10,6 +10,16 @@
         <a class="nav-link" href="/listings">All Listings</a>
         <a class="nav-link" href="/listings/new">Add New Listing</a>
       </div>
+      <div class="navbar-nav ms-auto">
+        <% if(!currentUser) { %>
+          <!-- currentUser is added to res.locals by our middleware, so it's available in all our views. It will be undefined if user is not authenticated, otherwise it will contain the authenticated user's info. -->
+          <a class="nav-link" href="/login">Log In</a>
+          <a class="nav-link" href="/signup">Sign Up</a>
+        <% } else { %>
+          <span class="navbar-text me-3">Welcome, <%= currentUser.username %>!</span>
+          <a class="nav-link" href="/logout">Log Out</a>
+
+        <% } %>
     </div>
   </div>
 </nav> 

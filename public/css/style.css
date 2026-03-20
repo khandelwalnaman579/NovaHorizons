@@ -1,3 +1,11 @@
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+.flex-grow-1 {
+    flex: 1;
+}
 body {
     font-family: 'Arial', sans-serif;
     display: flex;
@@ -121,7 +129,7 @@ body {
     object-fit: cover;
 }
 
-.edit-btn{
+.edit-btn, .signup-btn, .login-btn{
     background-color: #fe434d;
     border: none;
     color: white;
@@ -129,7 +137,7 @@ body {
     margin-right: 0.5rem;
 
 }
-.edit-btn:hover, .update-btn:hover{
+.edit-btn:hover, .update-btn:hover, .signup-btn:hover, .login-btn:hover{
     background-color: #fe434d;
     color:#222222;
     text-decoration: underline;

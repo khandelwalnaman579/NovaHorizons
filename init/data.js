@@ -1,4 +1,5 @@
-const sampleListings = [
+const sampleListings = {
+  data: [
 
 {
   title: "Lunar Serenity Stay",
@@ -284,5 +285,6 @@ const sampleListings = [
   availableTo: new Date("2037-01-01"),
 }
 
-];  
+]
+};  
 export default sampleListings;

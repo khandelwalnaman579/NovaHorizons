@@ -26,7 +26,11 @@ const listingSchema = new Schema(
       required: true,
       enum: ["Hotel", "Station", "Expedition", "Cruise"],
     },
-
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+    },
     description: {
       type: String,
       required: true,

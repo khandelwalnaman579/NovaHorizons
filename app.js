@@ -1,19 +1,26 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from "url";
+import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import ejsMate from 'ejs-mate';
 import methodOverride from 'method-override';
 import ExpressError from './utils/ExpressError.js';
-import listings from './routes/listing.js';
-import reviews from './routes/review.js';
+import listingRouter from './routes/listing.js';
+import reviewRouter from './routes/review.js';
+import userRouter from './routes/user.js';
 import session from 'express-session';
 import flash from 'connect-flash';
+import passport from 'passport';
+import LocalStrategy from 'passport-local';
+import User from './models/user.js';
+dotenv.config();
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 let port = 3000;
-let MONGO_URI = 'mongodb://localhost:27017/nova_horizons';
+let MONGO_URI = process.env.MONGO_URI;
+let SECRET_KEY = process.env.SECRET_KEY;
 
 // Connect to MongoDB
 main().then(() => { 
@@ -32,7 +39,7 @@ app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, 'public')));
 const sessionOptions = {
-    secret: 'your-secret-key',
+    secret: SECRET_KEY,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -48,14 +55,28 @@ app.get('/', (req, res) => {
 
 app.use(session(sessionOptions));
 app.use(flash());
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use((req, res, next) => {
     res.locals.success = req.flash('success');  
     res.locals.error = req.flash('error');
+    res.locals.currentUser = req.user; // or req.session.user
     next();
 });
 
-app.use('/listings', listings);
-app.use("/listings/:id/reviews", reviews);
+// app.use("/demoUser", async (req, res) => {
+//     let demoUser = new User({ username: "demoUser", email: "demouser@example.com" });
+//     let registeredUser = await User.register(demoUser, "password123");
+//     res.send(registeredUser);
+// });
+app.use('/', userRouter);
+app.use('/listings', listingRouter);
+app.use("/listings/:id/reviews", reviewRouter);
 app.use((req, res, next) => {
     if (req.method === "POST" || req.method === "PUT") {
         if (!req.body || Object.keys(req.body).length === 0) {

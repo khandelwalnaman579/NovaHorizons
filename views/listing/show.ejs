@@ -4,15 +4,15 @@
           <h3 class="show-title"><%= listing.title %></h3>
           <img class="card-img-top show-img" src="<%= listing.imageUrl %>" alt="listing image">
          <div class="card-body">
-            
-            <p class="card-text mt-3"><b><%= listing.description %></b></p> 
-            <p><%= listing.title %> - <%= listing.destination %></p>
-            <p>Price: &#x20B9;<%= listing.price.toLocaleString("en-IN") %>/<%= listing.durationInDays %> days</p>
-            <p>Type: <%= listing.type %></p>
-            <p>Capacity: <%= listing.capacity %></p>
-            <p>Amenities: <%= listing.amenities.join(', ') %></p>
-            <p>Available From: <%= listing.availableFrom ? listing.availableFrom.toDateString() : 'N/A' %> To: <%= listing.availableTo ? listing.availableTo.toDateString() : 'N/A' %></p>
-            <a href="/listings/<%= listing._id %>/edit" class="btn edit-btn edit-btn">Edit Listing</a>
+            <p  class="card-text mt-3">Owner: @<i><b><%= listing.owner.username %></b></i></p>
+            <p class="card-text"><b><%= listing.description %></b></p> 
+            <p class="card-text"><%= listing.title %> - <%= listing.destination %></p>
+            <p class="card-text">Price: &#x20B9;<%= listing.price.toLocaleString("en-IN") %>/<%= listing.durationInDays %> days</p>
+            <p class="card-text">Type: <%= listing.type %></p>
+            <p class="card-text">Capacity: <%= listing.capacity %></p>
+            <p class="card-text">Amenities: <%= listing.amenities.join(', ') %></p>
+            <p class="card-text">Available From: <%= listing.availableFrom ? listing.availableFrom.toDateString() : 'N/A' %> To: <%= listing.availableTo ? listing.availableTo.toDateString() : 'N/A' %></p>
+            <a href="/listings/<%= listing._id %>/edit" class="btn edit-btn">Edit Listing</a>
             <form action="/listings/<%= listing._id %>?_method=DELETE" method="post" style="display: inline-block;">
                 <button type="submit" class="btn delete-btn">Delete Listing</button>
             </form>

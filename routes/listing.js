@@ -5,6 +5,7 @@ import { listingSchema } from '../schema.js';
 import wrapAsync from '../utils/wrapAsync.js';
 import ExpressError from '../utils/ExpressError.js';
 import Listing from '../models/listing.js';
+import { isLoggedIn, isOwner } from '../middleware.js';
 
 
 const validateListing = (req, res, next) =>{
@@ -26,12 +27,12 @@ router.get('/', wrapAsync(async (req, res, next) => {
 })
 );
 
-//New route to show form for creating a new listing
-router.get('/new', (req, res) => {
+//New route for creating a new listing
+router.get('/new', isLoggedIn, isOwner, (req, res) => {//req.user is added by passport and it contains the authenticated user info. 
+  //isLoggedIn middleware checks if req.user exists, if not it redirects to login page. This way we can protect the route and only allow authenticated users to access it.
     res.render('listing/new.ejs');
 }); 
 
-//create route to handle form submission and create a new listing
 // create route require function
 function parseDate(dateStr){
   if(!dateStr) return null;
@@ -42,8 +43,11 @@ function parseDate(dateStr){
   }
   return new Date(dateStr);
 }
+
+//create route to handle form submission and create a new listing
 router.post(
-  "/",
+  "/", isLoggedIn,
+  isOwner,
   validateListing,
   wrapAsync(async (req, res) => {
 
@@ -59,6 +63,7 @@ router.post(
     listingData.availableTo = parseDate(listingData.availableTo);
 
     const newListing = new Listing(listingData);
+    newListing.owner = req.user._id;
 
     await newListing.save();
     req.flash('success', 'New listing created successfully!');
@@ -67,7 +72,7 @@ router.post(
 );
 
 //Edit route to show form for editing an existing listing
-router.get('/:id/edit', wrapAsync(async (req, res, next) => {
+router.get('/:id/edit', isLoggedIn, isOwner, wrapAsync(async (req, res, next) => {
     const { id } = req.params;
     const listing = await Listing.findById(id);
     if (!listing) {
@@ -79,7 +84,8 @@ router.get('/:id/edit', wrapAsync(async (req, res, next) => {
 
 //Update route to handle form submission and update an existing listing
 router.put(
-  "/:id",
+  "/:id", isLoggedIn, 
+  isOwner,
   validateListing,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
@@ -109,7 +115,7 @@ router.get('/:id', wrapAsync(async (req, res, next) => {
      if (!mongoose.Types.ObjectId.isValid(id)) {
         return next(new ExpressError(400, "Invalid listing ID"));
     }
-    const listing = await Listing.findById(id).populate("reviews");
+    const listing = await Listing.findById(id).populate("reviews").populate("owner", "username");
     if (!listing) {
         req.flash('error', 'Listing not found');
         return res.redirect('/listings');
@@ -119,7 +125,7 @@ router.get('/:id', wrapAsync(async (req, res, next) => {
 );
 
 //Delete route to handle deletion of a listing
-router.delete('/:id', wrapAsync(async (req, res, next) => {
+router.delete('/:id', isLoggedIn, isOwner, wrapAsync(async (req, res, next) => {
     const { id } = req.params;
     await Listing.findByIdAndDelete(id);
     req.flash('success', 'Listing deleted successfully!');
