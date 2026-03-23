@@ -60,17 +60,23 @@ const listingSchema = new Schema(
       },
     ],
 
-    imageUrl: {
-      type: String,
-      default: "https://images.unsplash.com/photo-1654280983312-110b5b422397?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      set: (value) => {
-        if (value && value.trim() !== "") {
-          return value;
-        }else {
-          return "https://images.unsplash.com/photo-1654280983312-110b5b422397?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
-      }
-    },
+   image: {
+  filename: {
+    type: String,
+    default: "default-image"
   },
+  url: {
+    type: String,
+    default: "https://images.unsplash.com/photo-1654280983312-110b5b422397?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    set: (value) => {
+      if (value && value.trim() !== "") {
+        return value;
+      } else {
+        return "https://images.unsplash.com/photo-1654280983312-110b5b422397?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+      }
+    }
+  },
+},
   reviews:[
        {
         type: Schema.Types.ObjectId,

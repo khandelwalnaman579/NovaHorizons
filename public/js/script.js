@@ -18,6 +18,22 @@
   })
 })()
 
+
+//auto close alert messages
+setTimeout(() => {
+  const alerts = document.querySelectorAll(".flash-msg");
+
+  alerts.forEach(alert => {
+    alert.style.transition = "opacity 0.5s ease";
+    alert.style.opacity = "0";
+
+    setTimeout(() => {
+      alert.remove();
+    }, 500); // remove after fade
+  });
+
+}, 3000); // 4 seconds
+
 // --------------------------------------
 // Add your date validation BELOW this
 // --------------------------------------

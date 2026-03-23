@@ -1,7 +1,8 @@
+import "./config/env.js";
+await import("./cloudConfig.js");
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from "url";
-import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import ejsMate from 'ejs-mate';
 import methodOverride from 'method-override';
@@ -14,13 +15,18 @@ import flash from 'connect-flash';
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
 import User from './models/user.js';
-dotenv.config();
+
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 let port = 3000;
 let MONGO_URI = process.env.MONGO_URI;
 let SECRET_KEY = process.env.SECRET_KEY;
+
+// needed because __dirname doesn't exist in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 // Connect to MongoDB
 main().then(() => { 
@@ -32,8 +38,7 @@ main().then(() => {
 async function main() {
    await mongoose.connect(MONGO_URI);
 }
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+
 app.set('views', path.join(__dirname, 'views'));
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
@@ -77,14 +82,14 @@ app.use((req, res, next) => {
 app.use('/', userRouter);
 app.use('/listings', listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
-app.use((req, res, next) => {
-    if (req.method === "POST" || req.method === "PUT") {
-        if (!req.body || Object.keys(req.body).length === 0) {
-            return next(new ExpressError(400, "Request body cannot be empty"));
-        }
-    }
-    next();
-});
+// app.use((req, res, next) => {
+//     if (req.method === "POST" || req.method === "PUT") {
+//         if (!req.body || Object.keys(req.body).length === 0) {
+//             return next(new ExpressError(400, "Request body cannot be empty"));
+//         }
+//     }
+//     next();
+// });
 
 app.use((req, res, next) =>{
     next(new ExpressError(404, "Page not found!"));

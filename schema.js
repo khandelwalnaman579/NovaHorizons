@@ -3,7 +3,7 @@ export const listingSchema = joi.object({
     listing : joi.object({
         title: joi.string().required(),
         description: joi.string().required(),
-        imageUrl: joi.string().allow("",null),
+        // imageUrl: joi.string().allow("",null),
         price: joi.number().required().min(0),
         destination: joi.string().required(),
         type: joi.string().required(),

@@ -1,7 +1,7 @@
 
 <% layout('/layouts/boilerplate') %>
     <h1 class="edit-title">Edit Listing</h1>
-    <form action="/listings/<%= listing._id %>?_method=PUT" method="post" class="needs-validation" novalidate>
+    <form action="/listings/<%= listing._id %>?_method=PUT" method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
         <div class="row">
             <div class="col-md-8">
                <label for="listing[title]"class="form-label">Title</label>
@@ -46,8 +46,12 @@
             </div>
         </div>
         <br>
-        <label for="listing[imageUrl]" class="form-label">Image Url</label>
-        <input type="url" name="listing[imageUrl]" placeholder="Image URL" value="<%= listing.imageUrl %>" class="form-control" required>
+        <div class="mb-3">
+            Original Image <br>
+            <img src="<%=originalImageUrl%>" alt="Unable to load your image">
+        </div>
+        <label for="listing[image]" class="form-label">Upload New Image</label>
+        <input type="file" name="listing[image]" class="form-control">
         <br>
         <div class="row">
             <label for="listing[availableFrom]" class="form-label">Time Period(from--to):</label>
