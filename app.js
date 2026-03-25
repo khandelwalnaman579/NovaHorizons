@@ -10,6 +10,7 @@ import ExpressError from './utils/ExpressError.js';
 import listingRouter from './routes/listing.js';
 import reviewRouter from './routes/review.js';
 import userRouter from './routes/user.js';
+import footerRouter from "./routes/footer.js"
 import session from 'express-session';
 import flash from 'connect-flash';
 import passport from 'passport';
@@ -18,7 +19,10 @@ import User from './models/user.js';
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
+app.set("query parser", "extended");  // added for filter cin listing controller
+
 app.use(methodOverride('_method'));
+
 let port = 3000;
 let MONGO_URI = process.env.MONGO_URI;
 let SECRET_KEY = process.env.SECRET_KEY;
@@ -55,7 +59,7 @@ const sessionOptions = {
 };
 
 app.get('/', (req, res) => {
-    res.send('Welcome to Nova Horizons!');
+    res.redirect('/listings');
 });
 
 app.use(session(sessionOptions));
@@ -82,6 +86,7 @@ app.use((req, res, next) => {
 app.use('/', userRouter);
 app.use('/listings', listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
+app.use("/", footerRouter);
 // app.use((req, res, next) => {
 //     if (req.method === "POST" || req.method === "PUT") {
 //         if (!req.body || Object.keys(req.body).length === 0) {

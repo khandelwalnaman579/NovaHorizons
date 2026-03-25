@@ -3,9 +3,12 @@ export const listingSchema = joi.object({
     listing : joi.object({
         title: joi.string().required(),
         description: joi.string().required(),
-        // imageUrl: joi.string().allow("",null),
+        // image.url: joi.string().allow("",null),
         price: joi.number().required().min(0),
-        destination: joi.string().required(),
+       // destination: joi.string().required(),
+        destination: joi.string()
+        .valid("Moon", "Mars", "Space Station", "Orbital Hotel", "Deep Space")
+        .required(),
         type: joi.string().required(),
         capacity: joi.number().required().min(1),
         durationInDays: joi.number().required().min(0),

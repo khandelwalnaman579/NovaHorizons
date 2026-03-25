@@ -8,15 +8,22 @@
                <label for="listing[title]" class="form-label">Title</label>
                <input type="text" name="listing[title]" placeholder="Orbital Resort" class="form-control" required>
             </div>
-            <div class="col-md-4">
-              <label for="listing[destination]" class="form-label">Destination</label>
-              <input type="text" name="listing[destination]" placeholder="Moon" class="form-control" required>
+           <div class="col-md-4">
+               <label for="listing[destination]" class="form-label">Destination</label>
+               <select name="listing[destination]" class="form-control" required>
+                  <option value="">Select Destination   <i class="fa-solid fa-sort-down"></i></option>
+                  <option value="Space Station">Space Station</option>
+                  <option value="Orbital Hotel">Orbital Hotel</option>
+                  <option value="Moon">Moon</option>
+                  <option value="Mars">Mars</option>
+                  <option value="Deep Space">Deep Space</option>
+              </select>
             </div>
         </div>
         <br>
         <div>
             <label for="listing[description]" class="form-label">Description</label>
-            <textarea name="listing[description]" placeholder="Description" class="form-control"></textarea>
+            <textarea name="listing[description]" placeholder="Description" class="form-control" required></textarea>
         </div>
         <br>
         <div class="row">

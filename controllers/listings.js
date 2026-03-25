@@ -3,8 +3,29 @@ import mongoose from 'mongoose';
 import ExpressError from '../utils/ExpressError.js';
 
 export const index = async (req, res, next) => {
-        const allListings = await Listing.find({});
-        res.render ("listing/index.ejs", {allListings});
+  const destination = req.query.listing?.destination;
+  const search = req.query.search;
+  let filter = {};
+  // Filter by destination
+  if (destination) {
+    filter.destination = destination;
+  }
+
+  // Search by title OR destination
+  if (search) {
+    filter.$or = [
+      { title: { $regex: search, $options: "i" } },
+      { destination: { $regex: search, $options: "i" } }
+    ];
+  }
+  
+  const allListings = await Listing.find(filter);
+  // AJAX support
+  if (req.headers.accept && req.headers.accept.includes("application/json")) {
+    return res.json({ listings: allListings });
+  }
+  // const allListings = await Listing.find({});
+  res.render ("listing/index.ejs", {allListings, destination});
 };
 
 export const renderNewForm = (req, res) => {//req.user is added by passport and it contains the authenticated user info. 

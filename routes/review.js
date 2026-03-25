@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router({ mergeParams: true });
 import wrapAsync from '../utils/wrapAsync.js';
-import { isReviewOwner,isLoggedIn, validateReview } from '../middleware.js';
+import { isLoggedIn, validateReview, isReviewOwner } from '../middleware.js';
 import * as reviewController from '../controllers/reviews.js';
 //==========REVIEW==============
 

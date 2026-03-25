@@ -1,30 +1,64 @@
 <% layout('/layouts/boilerplate') %>
-    <h1>Welcome to Nova Horizons</h1>
-    <p>Explore the universe with our exclusive space travel experiences.</p>
-    <!-- <form action="/listings/new" method="get">
-        <button type="submit">Create New Listing</button>
-    </form> -->
-        <div class="row  row-col-lg-3 row-col-md-2 row-col-sm-1" >
-            <% for(let listing of allListings) { %>
-            <div class="col">
-            <div class="card listing-card" style="width: 25rem;">
-                <a href="/listings/<%= listing._id %>" class="listing-link">
-               <img class="card-img-top" src="<%= listing.image.url %>" alt="listings image" height="25rem">
-               <div class="card-img-overlay"></div>
-                <div class="card-body">
-                  <h5 class="card-title"><%= listing.title %></h5>
-                  <p class="card-text"><%= listing.description %></p>
-                  <p><%= listing.title %> - <%= listing.destination %></p>
-                  <p>Price: &#x20B9;<%= listing.price.toLocaleString("en-IN") %>/<%= listing.durationInDays %> days</p>
-                </div></a>
-           </div>
-           </div>
-             <% } %>
-             <% if(allListings.length === 0) { %>
-                <p>No listings available at the moment. Please check back later!</p>
-            
-        <% } %>
-
+<style>
+    .filters{
+        margin-top: 1rem;
+        display: flex;
+        justify-content: space-between;
+    }
+    .filter{
+        margin-right: 1rem;
+        text-align: center;
+        opacity: 0.7;
+    }
+    .filter:hover{
+        opacity: 1;
+        cursor: pointer;
+    }
+</style>
+<div class="filters">
+        <div class="filter" data-destination="Moon" >
+            <i class="fa-solid fa-star-and-crescent"></i>
+            <p>Moon</p>
         </div>
-       
+        <div class="filter" data-destination="Mars">
+            <i class="fa-solid fa-earth-europe"></i>
+            <p>Mars</p>
+        </div>
+        <div class="filter" data-destination="Orbital Hotel">
+            <i class="fa-solid fa-rocket"></i>
+            <p>Orbital Hotel</p>
+        </div>
+        <div class="filter" data-destination="Space Station">
+           <i class="fa-solid fa-satellite" ></i>
+            <p>Space Station</p>
+        </div>
+        <div class="filter" data-destination="Deep Space">
+            <i class="fa-solid fa-meteor" ></i>
+            <p>Deep Space</p>
+        </div>
+        
+    </div>
+<p>Explore the universe with our exclusive space travel experiences.</p>
+<div id="listings-container" class="row  row-col-lg-3 row-col-md-2 row-col-sm-1" >
+    <% for(let listing of allListings) { %>
+    <div class="col">
+        <div class="card listing-card" style="width: 25rem;">
+            <a href="/listings/<%= listing._id %>" class="listing-link">
+              <img class="card-img-top" src="<%= listing.image.url %>" alt="listings image" height="25rem">
+              <div class="card-img-overlay"></div>  <!--use to provide opacity effect-->
+              <div class="card-body">
+                 <h5 class="card-title"><%= listing.title %></h5>
+                 <p class="card-text"><%= listing.description %></p>
+                 <p><%= listing.title %> - <%= listing.destination %></p>
+                 <p>Price: &#x20B9;<%= listing.price.toLocaleString("en-IN") %>/<%= listing.durationInDays %> days</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    <% } %>
+    <% if(allListings.length === 0) { %>
+        <p>No listings available at the moment. Please check back later!</p>
+    <% } %>
+</div>
+<script src="/js/filters.js"></script> 
     
