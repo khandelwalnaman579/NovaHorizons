@@ -12,6 +12,7 @@ import reviewRouter from './routes/review.js';
 import userRouter from './routes/user.js';
 import footerRouter from "./routes/footer.js"
 import session from 'express-session';
+import MongoStore from "connect-mongo";
 import flash from 'connect-flash';
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
@@ -24,7 +25,8 @@ app.set("query parser", "extended");  // added for filter cin listing controller
 app.use(methodOverride('_method'));
 
 let port = 3000;
-let MONGO_URI = process.env.MONGO_URI;
+const dbUrl = process.env.ATLASDB_URL;
+//let MONGO_URI = process.env.MONGO_URI;
 let SECRET_KEY = process.env.SECRET_KEY;
 
 // needed because __dirname doesn't exist in ES modules
@@ -32,22 +34,43 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 
-// Connect to MongoDB
-main().then(() => { 
-    console.log('Connected to MongoDB');
-}).catch(err => {
-    console.log('Error connecting to MongoDB:', err);
+// Connect and THEN start server
+main()
+  .then(() => {
+    console.log("Connected to MongoDB");
+
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
+
+  })
+  .catch((err) => {
+    console.log("Error connecting to MongoDB:", err);
 });
 
 async function main() {
-   await mongoose.connect(MONGO_URI);
+     //   await mongoose.connect(MONGO_URI);
+    await mongoose.connect(dbUrl);
 }
 
 app.set('views', path.join(__dirname, 'views'));
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, 'public')));
+
+const store = MongoStore.create({
+     mongoUrl: dbUrl,
+     crypto:{
+        secret: SECRET_KEY
+     },
+     touchAfter: 24 * 3600,// in seconds(not in mellisecond)
+});
+
+store.on("error", () => {
+    console.log("ERROR in MONGO SESSION STORE", err);
+});
 const sessionOptions = {
+    store,
     secret: SECRET_KEY,
     resave: false,
     saveUninitialized: true,
@@ -78,23 +101,10 @@ app.use((req, res, next) => {
     next();
 });
 
-// app.use("/demoUser", async (req, res) => {
-//     let demoUser = new User({ username: "demoUser", email: "demouser@example.com" });
-//     let registeredUser = await User.register(demoUser, "password123");
-//     res.send(registeredUser);
-// });
 app.use('/', userRouter);
 app.use('/listings', listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", footerRouter);
-// app.use((req, res, next) => {
-//     if (req.method === "POST" || req.method === "PUT") {
-//         if (!req.body || Object.keys(req.body).length === 0) {
-//             return next(new ExpressError(400, "Request body cannot be empty"));
-//         }
-//     }
-//     next();
-// });
 
 app.use((req, res, next) =>{
     next(new ExpressError(404, "Page not found!"));
@@ -104,8 +114,4 @@ app.use((err, req, res, next)=>{
     let {statusCode = 500, message = "Something went wrong"} = err;
     res.render("error.ejs",{message});
     // res.status(statusCode).send(message);
-});
-
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
 });
